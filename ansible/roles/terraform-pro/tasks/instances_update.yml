@@ -1,0 +1,10 @@
+---
+# Update all Debian or Ubuntu instances
+- name: Update instances
+  ansible.builtin.apt:
+    name: '*'
+    state: latest
+
+- name: Update all packages
+  ansible.builtin.apt:
+    update_cache: true

@@ -1,0 +1,11 @@
+---
+- name: Get instance AWS IPs
+  shell: |
+    chdir="{{ terraform_dir }}"
+    terraform output -raw instance_public_ip
+  register: instance_public_ip
+
+- name: Store instance IP in hosts file
+  shell: |
+    echo '[instances]' >> ~/project/inventory/hosts
+    echo "{{ instance_public_ip }}" >> ~/project/inventory/hosts

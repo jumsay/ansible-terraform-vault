@@ -1,0 +1,21 @@
+---
+- name: Provisioning instances with Terraform
+  hosts: localhost
+  connection: local
+  vars_files:
+    - "group_vars/global_vars.yml"
+    - "group_vars/vars.yml"
+  tasks:
+    - name: Run Terraform Provisioning
+      include_tasks: roles/terraform-pro/tasks/terraform_pro.yml
+
+    - name: Get Instances IPs
+      include_tasks: roles/terraform-pro/tasks/get_instances_ip.yml
+
+- name: Update all instances
+  hosts: instances
+  vars_files:
+    - "group_vars/vars.yml"
+  tasks:
+    - name: Update Instances
+      include_tasks: roles/terraform-pro/tasks/instances_update.yml
