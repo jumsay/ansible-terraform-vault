@@ -138,7 +138,7 @@ connecte on aws.
 ```sh
 nano  ~/<project folder>/group_vars/vars.yml
 ```
-
+Replace with your credentials
 ```yaml
 public_key: “ssh-rsa AAAXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX” 
 aws_access_key_id: AKXXXXXXXXXXXXXXXX
