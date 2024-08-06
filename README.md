@@ -16,9 +16,13 @@ How to automate Terraform provisionning with Ansible playbook
 3. Create key-pairs on aws
 
 ## Getting Started
+The provided instructions detail a comprehensive approach to automating the provisioning of AWS instances using Terraform, Ansible, and Ansible Vault. I'll summarize and provide a step-by-step guide along with the necessary scripts to streamline your setup.
 You can clone this repository before
 
 ### Directory structure
+
+Ensure the following directory structure in your project:
+
 ```bash
 project/
 ├── terraform/
@@ -41,14 +45,12 @@ project/
 ```
 
 
-### Step 1: Create terraform folder in the project folder
+### Step 1: Create terraform Configuration Files
 
 ```sh
 mkdir -p ~/<project folder>/terraform
 ```
 
-
-### Step 2: create file in the folder
 
 Inside the folder create a simple terraform main.tf
 ```sh title="main.tf"
@@ -123,7 +125,7 @@ output "instance_public_ip" {
 }
 ```
 
-### Step 2: Create vars folder
+### Step 2: Create Ansible Variables and Vault
 
 
 ```sh
@@ -142,11 +144,16 @@ public_key: “ssh-rsa AAAXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX”
 aws_access_key_id: AKXXXXXXXXXXXXXXXX
 aws_secret_access_key: 9iVmdMsLXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 ```
+####  Encypt variables with Ansible Vault
 
-After created and save password file, we will encrypt this file with Ansible Vault
-vars.vault (Add .vault in .gitignore file on your project folder)
+```sh
+openssl rand -base64 2048 > pass.vault
+ansible-vault create group_vars/vars.yml --vault-password-file vars.vault
+```
+After this if you need to edit the variables, replace "create" by "edit" in the command
 
-Create global variables for the project vars.yml
+
+Create global variables for the project global_vars.yml
 
 ```sh
 nano  ~/<project folder>/group_vars/global_vars.yml
@@ -155,40 +162,30 @@ nano  ~/<project folder>/group_vars/global_vars.yml
 terraform_dir: "~/<project folder>/terraform/"
 ```
 
-### Step 3: Encypt variables with Ansible Vault
 
-```sh
-openssl rand -base64 2048 > pass.vault
-```
-
-```sh
-ansible-vault create group_vars/all/vars.yml --vault-password-file vars.vault
-```
-After this if you need to edit the variables, replace "create" by "edit" in the command
-
-### Step 4: Create the Ansible role folder
+### Step 3: Create Ansible Roles
 We will create a folder where we will keep our roles.
 ```sh
-mkdir -p ~/<project folder>/roles
+mkdir -p ~/<project folder>/ansible/roles
 ```
-### Step 5: Create inventory folder and add empty hosts file
+- Create inventory file
+
+Create a file which will recieve ip address for instances provisionning by terraform
 ```sh
-mkdir -p ~/<project folder>/inventory
-```
-Create an empty host file which will recieve ip address for instances provisionning by terraform
-```sh
-touch  ~/<project folder>/inventory/hosts
+nano ~/<project folder>/ansible/hosts
+[localhost]
+127.0.0.1
 ```
 
 We will then move to this folder:
 ```sh
 cd  ~/<project folder>/ansible/roles
 ```
-### Step 5: create terraform provisionning role using Ansible Galaxy
+#### create terraform provisionning role using Ansible Galaxy
 ```sh
 ansible-galaxy init terraform-pro
 ```
-### Step 6: Create the terraform provisionning role tasks
+- Create the terraform provisionning role tasks
 
 go to <project folder>/ansible/roles/terraform-pro/tasks/
 
@@ -210,7 +207,7 @@ nano  ~/<project folder>/roles/terraform-pro/tasks/terraform_pro.yml
     terraform apply --auto-approuve
 ```
 
-create file get_instances_ip.yml
+- Get Instance IP create file get_instances_ip.yml
 ```sh
 nano  ~/<project folder>/roles/terraform-pro/tasks/terraform_ip.yml
 ```
@@ -224,10 +221,10 @@ nano  ~/<project folder>/roles/terraform-pro/tasks/terraform_ip.yml
 
 - name: Sotre instance in host file
   shell: |
-    echo '[instances]' >> ~/<project folder>/inventory/hosts
-    echo instance_public_ip >> ~/<project folder>/inventory/hosts
+    echo '[instances]' >> ~/<project folder>/ansible/hosts
+    echo instance_public_ip >> ~/<project folder>/ansible/hosts
 ```
-create file instances_update.yml
+- Update instances create file instances_update.yml
 
 ```sh
 nano  ~/<project folder>/roles/terraform-pro/tasks/instances_update.yml
@@ -248,7 +245,7 @@ nano  ~/<project folder>/roles/terraform-pro/tasks/instances_update.yml
 ```
 
 
-### Step 7: Create Ansible PlayBook to use the role
+### Step 4: Create Ansible PlayBook to use the role
 
 
 ```sh
@@ -280,10 +277,10 @@ nano  ~/<project folder>playbook.yml
 
 ```
 
-### Step 8: Run the Playbook
+### Step 5: Run the Playbook
 
 ```sh
-ansible-playbook ~/project/ansible/playbook.yml --vault-password-file ~/project/ansible/vars.vault
+ansible-playbook -i ~/project/ansible/host ~/project/ansible/playbook.yml --vault-password-file ~/project/ansible/vars.vault
 ```
 
 By following these steps, you will have an automated workflow for provisioning AWS instances with Terraform, securing sensitive data with Ansible Vault, and managing infrastructure with Ansible playbooks.
