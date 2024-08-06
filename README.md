@@ -1,6 +1,6 @@
 
 # Automate Terraform with Ansible Playbook and vault
-How to automate Terraform provisionning with Ansible playbook
+How to automate Terraform provisioning with Ansible playbook
 
 ![Ansible](https://img.shields.io/badge/Ansible-required-blue?logo=ansible&logoColor=white&logoSize=auto) 
 ![Terraform](https://img.shields.io/badge/Terraform-required-blue?logo=terraform&logoColor=white&logoSize=auto) 
