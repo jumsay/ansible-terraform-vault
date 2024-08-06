@@ -8,4 +8,4 @@
 - name: Store instance IP in hosts file
   shell: |
     echo '[instances]' >> ~/project/inventory/hosts
-    echo "{{ instance_public_ip }}" >> ~/project/inventory/hosts
+    echo "{{ instance_public_ip }}" >> ~/project/ansible/hosts

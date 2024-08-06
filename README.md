@@ -132,8 +132,7 @@ output "instance_public_ip" {
 mkdir -p ~/<project folder>/group_vars
 ```
 
-create vars.yml file witch will contain the variable need by terraform to 
-connecte on aws.
+create vars.yml file witch will contain the variable need by terraform to connect aws.
 
 ```sh
 nano  ~/<project folder>/group_vars/vars.yml
